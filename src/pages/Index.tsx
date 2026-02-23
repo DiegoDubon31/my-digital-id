@@ -11,18 +11,33 @@ const Index = () => {
     setError(null);
     setIsLoading(true);
     try {
+      // Verificar contexto seguro (HTTPS o localhost)
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setError(
+          "Tu navegador no soporta acceso a la cámara en este contexto. " +
+          "La cámara requiere HTTPS. Asegúrate de que tu sitio use HTTPS (por ejemplo, con CloudFront delante de S3)."
+        );
+        setIsLoading(false);
+        return;
+      }
+      // Llamada directa en el handler del click (requerido por el navegador)
       const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+        await videoRef.current.play();
       }
       setStream(mediaStream);
     } catch (err: any) {
       if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
         setError("Permiso de cámara denegado. Por favor, permite el acceso a la cámara en la configuración de tu navegador.");
-      } else if (err.name === "NotFoundError") {
-        setError("No se encontró ninguna cámara en este dispositivo.");
+      } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+        setError("No se encontró ninguna cámara en este dispositivo. Asegúrate de que esté conectada y no esté en uso por otra aplicación.");
+      } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+        setError("La cámara está en uso por otra aplicación. Ciérrala e intenta de nuevo.");
+      } else if (err.name === "OverconstrainedError") {
+        setError("No se pudo acceder a la cámara con la configuración solicitada.");
       } else {
-        setError("Error al acceder a la cámara: " + err.message);
+        setError("Error al acceder a la cámara: " + (err.message || "Error desconocido"));
       }
     } finally {
       setIsLoading(false);

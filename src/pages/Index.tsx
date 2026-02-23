@@ -65,14 +65,14 @@ const Index = () => {
               <User className="w-5 h-5 text-primary shrink-0" />
               <div>
                 <span className="text-sm text-muted-foreground">Nombre Completo</span>
-                <p className="font-semibold text-foreground">[TU NOMBRE COMPLETO]</p>
+                <p className="font-semibold text-foreground">Diego Andrés Dubón Samayoa</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <IdCard className="w-5 h-5 text-primary shrink-0" />
               <div>
                 <span className="text-sm text-muted-foreground">Carnet</span>
-                <p className="font-semibold text-foreground">[TU CARNET]</p>
+                <p className="font-semibold text-foreground">202202429</p>
               </div>
             </div>
           </div>
